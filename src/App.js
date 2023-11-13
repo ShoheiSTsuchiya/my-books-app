@@ -1,25 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-function App() {
+function BooksComponent() {
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    axios.get('https://springdatastoresample-398023.uw.r.appspot.com/findAllBooks')
+      .then(response => {
+        setBooks(response.data);
+        setLoading(false);
+      })
+      .catch(error => {
+        setError(error.message);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+       {/* Heading for the books section */}
+      <h1>Books</h1>
+      <ul>
+        {/* Mapping each book to an individual list item .
+         Each book is represented as a list item with a unique key*/}
+        {books.map(book => (
+          <li key={book.id}>{book.title}</li>
+        ))}
+      </ul>
     </div>
   );
 }
 
-export default App;
+export default BooksComponent;
